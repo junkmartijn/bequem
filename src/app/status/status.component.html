@@ -1,0 +1,5 @@
+<span *ngFor=" let status of statuses">
+  <span class="status" [style.background-color]="(status.enabled) ? 'green' : 'red'">
+    {{status.name}}
+  </span>
+</span>

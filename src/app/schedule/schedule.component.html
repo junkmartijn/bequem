@@ -1,0 +1,32 @@
+<h2>Taken</h2>
+<mat-card>
+  <mat-card-content>
+    <h2>Huidige taken</h2>
+    <section class="example-section">
+      <app-schedule-table [tasks]="tasks"></app-schedule-table>
+    </section>
+  </mat-card-content>
+</mat-card>
+<br>
+<mat-card>
+  <mat-card-content>
+    <h2>Nieuwe taak</h2>
+    <section class="example-section">
+      <label>
+        Tijd (hh:mm):
+        <input #time="ngModel" type="text" required pattern="^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$" [(ngModel)]="newTask.datetime">
+        <span style="color:red" [hidden]="time.valid || time.pristine">Formaat ongeldig</span>
+        <br>
+        <br>
+
+        Aan/uit: <input type="checkbox" [(ngModel)]="newTask.action" /><br>
+
+        <button [disabled]="!time.valid" (click)="add(); time.value=''">
+          add
+        </button>
+      </label>
+
+      {{msg}}
+    </section>
+  </mat-card-content>
+</mat-card>

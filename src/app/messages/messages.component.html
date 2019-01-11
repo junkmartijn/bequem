@@ -1,0 +1,4 @@
+<h3>Messages</h3>
+<div *ngFor='let message of messages'>
+  {{message.datetime | date : 'yyyy-MM-dd HH:mm'}}: <b>{{message.text}}</b>
+</div>

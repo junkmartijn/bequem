@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <th>Tijd</th>
+    <th>Actie</th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let task of tasks">
+    <td>{{task.datetime | date : 'HH:mm'}}</td>
+    <td>{{task.action}}</td>
+    <td><span [style.color]="(task.action) ? 'green' : 'red'">&#9679;</span></td>
+  </tr>
+</table>
