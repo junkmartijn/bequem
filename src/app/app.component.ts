@@ -7,5 +7,5 @@ import 'hammerjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'bequem';
+  title = 'Verwarming';
 }
