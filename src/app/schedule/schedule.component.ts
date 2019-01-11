@@ -8,11 +8,9 @@ import { Observable } from 'rxjs';
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.css']
 })
-
-
 export class ScheduleComponent implements OnInit {
   newTask: Task = new Task();
-  msg: string;
+  msg: Observable<string>;
   tasks: Task[];
 
   constructor(private heatControlService: HeatControlService) { }
@@ -22,16 +20,12 @@ export class ScheduleComponent implements OnInit {
     this.newTask.action = false;
   }
 
-
-
   getTasks(): void {
     this.heatControlService.getTasks()
       .subscribe(tasks => this.tasks = tasks);
   }
 
   add(): void {
-    this.heatControlService.addTask(this.newTask).subscribe(msg => {
-      this.msg = msg;
-    });;
+    this.msg = this.heatControlService.addTask({ datetime: this.newTask.datetime, action: this.newTask.action });
   }
 }

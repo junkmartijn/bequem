@@ -28,9 +28,8 @@ export class ManualOverrideComponent implements OnInit {
     console.log(`sliderChecked ${this.temporaryOverrideSliderChecked}`);
     this.slidersDisabled = true;
 
-    this.heatControlService.setTemporaryOverride(this.temporaryOverrideSliderChecked).subscribe();
-    //wachten op antwoord?
-    this.slidersDisabled = false;
+    this.heatControlService.setTemporaryOverride(this.temporaryOverrideSliderChecked)
+      .subscribe(_ => this.slidersDisabled = false);
 
     //as callback
     this.GetStatus();

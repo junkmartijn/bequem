@@ -9,7 +9,7 @@ export class MessageService {
   messages: Message[] = [];
 
   add(messageText: string) {
-    const message: Message = {
+    const message = {
       datetime: new Date(),
       text: messageText
     }
