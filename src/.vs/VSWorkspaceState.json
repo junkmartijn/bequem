@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\manual-override",
+    "\\app\\models",
+    "\\app\\schedule",
+    "\\app\\schedule-table",
+    "\\app\\services"
+  ],
+  "SelectedNode": "\\app\\manual-override\\manual-override.component.ts",
+  "PreviewInSolutionExplorer": false
+}
