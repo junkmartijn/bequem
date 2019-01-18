@@ -9,7 +9,7 @@ import { ScheduleComponent } from './schedule/schedule.component';
 import { ManualOverrideComponent } from './manual-override/manual-override.component';
 import { MessagesComponent } from './messages/messages.component';
 import { ScheduleTableComponent } from './schedule-table/schedule-table.component';
-import { StatusComponent } from './status/status.component';
+
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -22,7 +22,6 @@ import { MatSlideToggleModule, MatCardModule } from '@angular/material';
     ManualOverrideComponent,
     MessagesComponent,
     ScheduleTableComponent,
-    StatusComponent
   ],
   imports: [
     BrowserModule,

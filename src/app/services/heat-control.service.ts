@@ -35,7 +35,7 @@ export class HeatControlService {
 
     return this.http.get<HeatStatusResponse>(this.heatStatusUrl).pipe(
       tap(_ => this.messageService.add('fetched status')),
-      catchError(this.handleHttpError('getHeatStatuses', [])))
+      catchError(this.handleHttpError<HeatStatusResponse>('getHeatStatuses')));
 
     //return this.http.get('http://192.168.1.150/heat_status');
     /*.subscribe(res => {
