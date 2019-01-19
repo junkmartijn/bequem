@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HeatControlService } from '../services/heat-control.service';
 import { Observable } from 'rxjs';
-import { HeatStatus } from '../models/heat-status';
 import { HeatStatusResponse } from '../models/heat-status-response';
 
 @Component({
