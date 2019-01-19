@@ -48,15 +48,10 @@ export class ManualOverrideComponent implements OnInit {
         this.GetStatus();
         this.slidersDisabled = false
       });
-
-
-
   }
 
   GetStatus() {
     this.heatControlService.getHeatStatuses().subscribe(status => {
-      console.log("status: " + status);
-
       let heat_status = status.heat_status;
       if (heat_status == 1 || heat_status == 3) {
         this.temporaryOverrideStatus = true;
@@ -79,26 +74,8 @@ export class ManualOverrideComponent implements OnInit {
         this.permanentOverrideStatus = true;
       }
 
-
-      //let q = JSON.stringify(y);
-      //console.log("q: " + q);
-      //let z = r[0];
-      //console.log("z: " + z.heat_status);
-      //let z = y["heat_status"];
-      //console.log(z);
-
-
-
-
-
-      //this.temporaryOverrideStatus = statuses[0].enabled;
-      //this.permanentOverrideStatus = statuses[1].enabled;
-
       this.temporaryOverrideSliderChecked = this.temporaryOverrideStatus;
       this.permanentOverrideSliderChecked = this.permanentOverrideStatus;
-
     });;
-
-
   }
 }
