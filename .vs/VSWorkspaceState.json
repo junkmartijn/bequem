@@ -3,11 +3,8 @@
     "",
     "\\src",
     "\\src\\app",
-    "\\src\\app\\manual-override",
-    "\\src\\app\\schedule",
-    "\\src\\app\\schedule-table",
-    "\\src\\app\\services"
+    "\\src\\app\\schedule"
   ],
-  "SelectedNode": "\\src\\app\\app-routing.module.ts",
+  "SelectedNode": "\\src\\app\\schedule\\schedule.component.html",
   "PreviewInSolutionExplorer": false
 }

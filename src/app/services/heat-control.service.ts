@@ -6,6 +6,7 @@ import { HeatStatusResponse } from '../models/heat-status-response';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap, takeLast } from 'rxjs/operators';
+import { DayOfWeek } from '../models/day-of-week';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -17,7 +18,8 @@ const httpOptions = {
 
 export class HeatControlService {
 
-  private heatControlBaseUrl = 'http://demo5335077.mockable.io/';
+  //private heatControlBaseUrl = 'http://demo5335077.mockable.io/';
+  private heatControlBaseUrl = 'http://192.168.1.207/';
   private heatControlTaskUrl = this.heatControlBaseUrl + 'api/task';
   private heatControlTasksUrl = this.heatControlBaseUrl + 'api/tasks';
   private heatControlOverrideUrl = 'http://192.168.1.150/overrides?onzin=1&';
@@ -39,6 +41,38 @@ export class HeatControlService {
         tap(_ => this.messageService.add('fetched tasks')),
         catchError(this.handleHttpError('getTasks', []))
       );
+  }
+
+  addTask(task: Task): Observable<string> {
+    this.messageService.add(`addTask called with time ${task.datetime} and action ${task.action}`);
+
+    let newTask = {
+      d: task.dayOfWeek,
+      h: task.datetime.getHours,
+      m: task.datetime.getMinutes,
+      s: task.action
+    }
+
+    return this.http.post<string>(this.heatControlTaskUrl, newTask, httpOptions).pipe(
+      tap((msg: string) => this.messageService.add(`Taak toegevoegd, response: ${msg}`)),
+      catchError(this.handleHttpError<string>('addTask')));
+  }
+
+  deleteTask(task: Task): Observable<string> {
+    this.messageService.add(`deleteTask called with time ${task.datetime} and action ${task.action}`);
+
+    let task1 = {
+      d: task.dayOfWeek,
+      h: task.datetime.getHours,
+      m: task.datetime.getMinutes,
+      s: task.action
+    }
+
+    let deleteUrl = `${this.heatControlTaskUrl}/d=${task1.d}&h=${task1.h}&m=${task1.m}&s=${task1.s}`;
+
+    return this.http.delete<string>(deleteUrl, httpOptions).pipe(
+      tap((msg: string) => this.messageService.add(`Taak verwijderd, response: ${msg}`)),
+      catchError(this.handleHttpError<string>('deleteTask')));
   }
 
   TaskMapper(taskDatas: TaskData[]): Task[] {
@@ -70,20 +104,7 @@ export class HeatControlService {
       catchError(this.handleHttpError<string>('setTemporaryOverride')));
   }
   
-  addTask(task: Task): Observable<string> {
-    this.messageService.add(`addTask called with time ${task.datetime} and action ${task.action}`);
 
-    let newTask = {
-      d: task.dayOfWeek,
-      h: task.datetime.getHours,
-      m: task.datetime.getMinutes,
-      s: task.action
-    }
-
-    return this.http.post<string>(this.heatControlTaskUrl, newTask, httpOptions).pipe(
-      tap((msg: string) => this.messageService.add(`Taak toegevoegd, response: ${msg}`)),
-      catchError(this.handleHttpError<string>('addTask')));
-  }
 
   private handleHttpError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
