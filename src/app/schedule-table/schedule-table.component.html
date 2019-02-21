@@ -1,12 +1,18 @@
 <table *ngIf="tasks !=null && tasks.length > 0">
   <tr>
+    <th>Dag</th>
     <th>Tijd</th>
     <th>Actie</th>
     <th></th>
+    <th></th>
   </tr>
   <tr *ngFor="let task of tasks">
+    <td>{{task.dow}}</td>
     <td>{{task.datetime | date : 'HH:mm'}}</td>
     <td>{{task.action}}</td>
     <td><span [style.color]="(task.action) ? 'green' : 'red'">&#9679;</span></td>
+    <td>
+      <button class="delete" title="taak verwijderen" (click)="delete(task)">x</button>
+    </td>
   </tr>
 </table>

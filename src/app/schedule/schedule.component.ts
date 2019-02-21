@@ -10,17 +10,18 @@ import { DayOfWeek } from '../models/day-of-week';
   styleUrls: ['./schedule.component.css']
 })
 export class ScheduleComponent implements OnInit {
-  newTask: Task = new Task();
+  newTask: Task = new Task(new Date(),false,8);
   msg: Observable<string>;
   tasks: Task[];
+  selectedDow;
   constructor(private heatControlService: HeatControlService) {
     this.categoryTypes = DayOfWeekMapping;
-    this.newTask.dayOfWeek= this.categoryTypes[7]; // set default value 
+    //this.newTask.dow= this.categoryTypes[7]; // set default value 
   }
 
   ngOnInit() {
     this.getTasks();
-    this.newTask.action = false;
+    //this.newTask.action = false;
   }
 
   getTasks(): void {
@@ -29,11 +30,23 @@ export class ScheduleComponent implements OnInit {
   }
 
   add(): void {
-    this.msg = this.heatControlService.addTask({
-      dayOfWeek: this.newTask.dayOfWeek,
-      datetime: this.newTask.datetime,
-      action: this.newTask.action
-    });
+    let hm=this.newTask.datetimeString.split(':');
+    let h:number=+hm[0];
+    let m:number=+hm[1];
+
+    let ds=DayOfWeekMapping.find(d=>d.type===this.selectedDow.type,'first');
+
+    let newTask : Task = new Task(
+      new Date(0,0,0,h,m),
+      this.newTask.action,
+      ds.value);
+    // {
+    //   dow: ds.value,//this.newTask.dow,
+    //   datetimeString: this.newTask.datetimeString,
+    //   datetime: new Date(0,0,0,h,m),
+    //   action: this.newTask.action
+    // }
+    this.msg = this.heatControlService.addTask(newTask);
   }
 
 
@@ -41,7 +54,7 @@ export class ScheduleComponent implements OnInit {
  // public get selectedCategoryType(): DayOfWeek {
     //return this.selectedValue ? this.selectedValue.value : null;
   //}
-  private categoryTypes;
+  public categoryTypes;
   //public selectedValue: any;
 
   

@@ -37,7 +37,7 @@ export class HeatControlService {
 
   getTasks(): Observable<Task[]> {
     return this.http.get<TaskData[]>(this.heatControlTasksUrl)
-      .pipe(map(t=>this.TaskMapper(t)),
+      .pipe(map(t => this.TaskMapper(t)),
         tap(_ => this.messageService.add('fetched tasks')),
         catchError(this.handleHttpError('getTasks', []))
       );
@@ -46,14 +46,23 @@ export class HeatControlService {
   addTask(task: Task): Observable<string> {
     this.messageService.add(`addTask called with time ${task.datetime} and action ${task.action}`);
 
+    let dd: number = task.dow;
+    let xx: Date = task.datetime;
+    let hh = xx.getHours();
+    let mm = xx.getMinutes();
+
+    this.messageService.add(`addTask ${xx} ${dd} ${hh} ${mm}`);
+
     let newTask = {
-      d: task.dayOfWeek,
-      h: task.datetime.getHours,
-      m: task.datetime.getMinutes,
-      s: task.action
+      d: dd,
+      h: hh,
+      m: mm,
+      s: task.action ? 1 : 0
     }
 
-    return this.http.post<string>(this.heatControlTaskUrl, newTask, httpOptions).pipe(
+    this.messageService.add(`addTaskNow ${newTask.d} ${newTask.h} ${newTask.m} ${newTask.s}`);
+
+    return this.http.post(this.heatControlTaskUrl, newTask, { responseType: 'text' }).pipe(
       tap((msg: string) => this.messageService.add(`Taak toegevoegd, response: ${msg}`)),
       catchError(this.handleHttpError<string>('addTask')));
   }
@@ -62,7 +71,7 @@ export class HeatControlService {
     this.messageService.add(`deleteTask called with time ${task.datetime} and action ${task.action}`);
 
     let task1 = {
-      d: task.dayOfWeek,
+      d: task.dow,
       h: task.datetime.getHours,
       m: task.datetime.getMinutes,
       s: task.action
@@ -76,13 +85,22 @@ export class HeatControlService {
   }
 
   TaskMapper(taskDatas: TaskData[]): Task[] {
-    let tasks: Task[];
+    let tasks: Task[] = [];
+
     for (var i = 0; i < taskDatas.length; i++) {
       let taskData = taskDatas[i];
-      let task: Task;
-      task.dayOfWeek = taskData.d;
-      task.action = taskData.s;
-      task.datetime= new Date(0,0,0,taskData.h,taskData.m);
+      let task: Task = new Task(new Date(0, 0, 0, taskData.h, taskData.m),taskData.s,taskData.d);
+      // {
+      //   dow: taskData.d,
+      //   action: taskData.s,
+      //   datetime: new Date(0, 0, 0, taskData.h, taskData.m),
+      //   datetimeString: `${taskData.h}:${taskData.m}`,
+      //   getDow
+
+      // };
+      // task.dayOfWeek = taskData.d;
+      // task.action = taskData.s;
+      // task.datetime= new Date(0,0,0,taskData.h,taskData.m);
       tasks.push(task);
     }
     return tasks;
@@ -103,7 +121,7 @@ export class HeatControlService {
       tap((msg: string) => this.messageService.add(`Override ingesteld, response: ${msg}`)),
       catchError(this.handleHttpError<string>('setTemporaryOverride')));
   }
-  
+
 
 
   private handleHttpError<T>(operation = 'operation', result?: T) {
