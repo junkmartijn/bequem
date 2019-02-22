@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Task } from '../models/task';
 import { HeatControlService } from '../services/heat-control.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-schedule-table',
@@ -9,6 +10,7 @@ import { HeatControlService } from '../services/heat-control.service';
 })
 export class ScheduleTableComponent implements OnInit {
   @Input() tasks: Task[]
+  msg: Observable<string>;
 
   constructor(private heatControlService: HeatControlService) { }
 
@@ -17,6 +19,6 @@ export class ScheduleTableComponent implements OnInit {
   
   delete(task: Task): void {
     this.tasks = this.tasks.filter(t => t !== task);
-    this.heatControlService.deleteTask(task).subscribe();
+    this.msg =  this.heatControlService.deleteTask(task);
   }
 }

@@ -72,16 +72,26 @@ export class HeatControlService {
 
     let task1 = {
       d: task.dow,
-      h: task.datetime.getHours,
-      m: task.datetime.getMinutes,
+      h: task.datetime.getHours(),
+      m: task.datetime.getMinutes(),
       s: task.action
     }
+   
 
-    let deleteUrl = `${this.heatControlTaskUrl}/d=${task1.d}&h=${task1.h}&m=${task1.m}&s=${task1.s}`;
-
-    return this.http.delete<string>(deleteUrl, httpOptions).pipe(
+    let requestOptions = { params: {
+      d: task.dow.toString(),
+      h: task.datetime.getHours().toString(),
+      m: task.datetime.getMinutes().toString(),
+      s: task.action.toString()
+    }};
+    
+    return this.http.delete(this.heatControlTaskUrl, requestOptions).pipe(
       tap((msg: string) => this.messageService.add(`Taak verwijderd, response: ${msg}`)),
       catchError(this.handleHttpError<string>('deleteTask')));
+  
+    //return this.http.delete(deleteUrl, httpOptions).pipe(
+    //  tap((msg: string) => this.messageService.add(`Taak verwijderd, response: ${msg}`)),
+    //  catchError(this.handleHttpError<string>('deleteTask')));
   }
 
   TaskMapper(taskDatas: TaskData[]): Task[] {
