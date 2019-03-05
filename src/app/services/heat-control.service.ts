@@ -19,7 +19,7 @@ const httpOptions = {
 export class HeatControlService {
 
   //private heatControlBaseUrl = 'http://demo5335077.mockable.io/';
-  private heatControlBaseUrl = 'http://192.168.1.207/';
+  private heatControlBaseUrl = 'http://192.168.1.204/';
   private heatControlTaskUrl = this.heatControlBaseUrl + 'api/task';
   private heatControlTasksUrl = this.heatControlBaseUrl + 'api/tasks';
   private heatControlOverrideUrl = 'http://192.168.1.150/overrides?onzin=1&';
