@@ -3,9 +3,10 @@
     "",
     "\\src",
     "\\src\\app",
+    "\\src\\app\\manual-override",
     "\\src\\app\\schedule",
     "\\src\\app\\schedule-table"
   ],
-  "SelectedNode": "\\src\\app\\schedule-table\\schedule-table.component.css",
+  "SelectedNode": "\\src\\app\\manual-override\\manual-override.component.ts",
   "PreviewInSolutionExplorer": false
 }

@@ -10,7 +10,7 @@ import { DayOfWeek } from '../models/day-of-week';
   styleUrls: ['./schedule.component.css']
 })
 export class ScheduleComponent implements OnInit {
-  newTask: Task = new Task(new Date(),false,8);
+  newTask: Task = new Task(new Date(), false, 8);
   msg: Observable<string>;
   tasks: Task[];
   selectedDow;
@@ -30,14 +30,14 @@ export class ScheduleComponent implements OnInit {
   }
 
   add(): void {
-    let hm=this.newTask.datetimeString.split(':');
-    let h:number=+hm[0];
-    let m:number=+hm[1];
+    let hm = this.newTask.datetimeString.split(':');
+    let h: number = +hm[0];
+    let m: number = +hm[1];
 
-    let ds=DayOfWeekMapping.find(d=>d.type===this.selectedDow.type,'first');
+    let ds = DayOfWeekMapping.find(d => d.type === this.selectedDow.type, 'first');
 
-    let newTask : Task = new Task(
-      new Date(0,0,0,h,m),
+    let newTask: Task = new Task(
+      new Date(0, 0, 0, h, m),
       this.newTask.action,
       ds.value);
     // {
@@ -46,18 +46,18 @@ export class ScheduleComponent implements OnInit {
     //   datetime: new Date(0,0,0,h,m),
     //   action: this.newTask.action
     // }
-    this.msg = this.heatControlService.addTask(newTask);
+    this.heatControlService.addTask(newTask).subscribe(m => { this.getTasks() });
   }
 
 
   // I have change this to public just for demo
- // public get selectedCategoryType(): DayOfWeek {
-    //return this.selectedValue ? this.selectedValue.value : null;
+  // public get selectedCategoryType(): DayOfWeek {
+  //return this.selectedValue ? this.selectedValue.value : null;
   //}
   public categoryTypes;
   //public selectedValue: any;
 
-  
+
 }
 
 

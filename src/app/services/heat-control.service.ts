@@ -44,54 +44,27 @@ export class HeatControlService {
   }
 
   addTask(task: Task): Observable<string> {
-    this.messageService.add(`addTask called with time ${task.datetime} and action ${task.action}`);
-
-    let dd: number = task.dow;
-    let xx: Date = task.datetime;
-    let hh = xx.getHours();
-    let mm = xx.getMinutes();
-
-    this.messageService.add(`addTask ${xx} ${dd} ${hh} ${mm}`);
-
     let newTask = {
-      d: dd,
-      h: hh,
-      m: mm,
+      d: task.dow,
+      h: task.datetime.getHours(),
+      m: task.datetime.getMinutes(),
       s: task.action ? 1 : 0
     }
-
-    this.messageService.add(`addTaskNow ${newTask.d} ${newTask.h} ${newTask.m} ${newTask.s}`);
-
+    
     return this.http.post(this.heatControlTaskUrl, newTask, { responseType: 'text' }).pipe(
       tap((msg: string) => this.messageService.add(`Taak toegevoegd, response: ${msg}`)),
       catchError(this.handleHttpError<string>('addTask')));
   }
 
   deleteTask(task: Task): Observable<string> {
-    this.messageService.add(`deleteTask called with time ${task.datetime} and action ${task.action}`);
+    let d = task.dow.toString();
+    let h = task.datetime.getHours().toString();
+    let m = task.datetime.getMinutes().toString();
+    let s = task.action.toString();
 
-    let task1 = {
-      d: task.dow,
-      h: task.datetime.getHours(),
-      m: task.datetime.getMinutes(),
-      s: task.action
-    }
-   
-
-    let requestOptions = { params: {
-      d: task.dow.toString(),
-      h: task.datetime.getHours().toString(),
-      m: task.datetime.getMinutes().toString(),
-      s: task.action.toString()
-    }};
-    
-    return this.http.delete(this.heatControlTaskUrl, requestOptions).pipe(
+    return this.http.delete(this.heatControlTaskUrl, { responseType: 'text', params: { d: d, h: h, m: m, s: s } }).pipe(
       tap((msg: string) => this.messageService.add(`Taak verwijderd, response: ${msg}`)),
       catchError(this.handleHttpError<string>('deleteTask')));
-  
-    //return this.http.delete(deleteUrl, httpOptions).pipe(
-    //  tap((msg: string) => this.messageService.add(`Taak verwijderd, response: ${msg}`)),
-    //  catchError(this.handleHttpError<string>('deleteTask')));
   }
 
   TaskMapper(taskDatas: TaskData[]): Task[] {
@@ -99,7 +72,7 @@ export class HeatControlService {
 
     for (var i = 0; i < taskDatas.length; i++) {
       let taskData = taskDatas[i];
-      let task: Task = new Task(new Date(0, 0, 0, taskData.h, taskData.m),taskData.s,taskData.d);
+      let task: Task = new Task(new Date(0, 0, 0, taskData.h, taskData.m), taskData.s, taskData.d);
       // {
       //   dow: taskData.d,
       //   action: taskData.s,
