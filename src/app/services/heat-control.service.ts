@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { MessageService } from './message.service';
 import { Task } from '../models/task';
 import { TaskData } from '../models/task-data';
-import { HeatStatusResponse } from '../models/heat-status-response';
+import { HeatStatus } from '../models/heat-status';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap, takeLast } from 'rxjs/operators';
 import { DayOfWeek } from '../models/day-of-week';
+import { DateTime } from '../models/datetime';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -20,19 +21,25 @@ export class HeatControlService {
 
   //private heatControlBaseUrl = 'http://demo5335077.mockable.io/';
   private heatControlBaseUrl = 'http://192.168.1.204/';
+  private heatControlTimeUrl = this.heatControlBaseUrl + 'api/time';
+  private heatControlHeatUrl = this.heatControlBaseUrl + 'api/heat';
   private heatControlTaskUrl = this.heatControlBaseUrl + 'api/task';
   private heatControlTasksUrl = this.heatControlBaseUrl + 'api/tasks';
-  private heatControlOverrideUrl = 'http://192.168.1.150/overrides?onzin=1&';
-  private heatControlStatusUrl = 'http://192.168.1.150/heat_status';
 
   constructor(
     private http: HttpClient,
     private messageService: MessageService) { }
 
-  getHeatStatuses(): Observable<HeatStatusResponse> {
-    return this.http.get<HeatStatusResponse>(this.heatControlStatusUrl).pipe(
+  getHeatStatus(): Observable<HeatStatus> {
+    return this.http.get<HeatStatus>(this.heatControlHeatUrl).pipe(
       tap(_ => this.messageService.add('fetched status')),
-      catchError(this.handleHttpError<HeatStatusResponse>('getHeatStatuses')));
+      catchError(this.handleHttpError<HeatStatus>('getHeatStatuses')));
+  }
+
+  getTime(): Observable<DateTime> {
+    return this.http.get<DateTime>(this.heatControlTimeUrl).pipe(
+      tap(_ => this.messageService.add('fetched time')),
+      catchError(this.handleHttpError<DateTime>('getTime')));
   }
 
   getTasks(): Observable<Task[]> {
@@ -50,7 +57,7 @@ export class HeatControlService {
       m: task.datetime.getMinutes(),
       s: task.action ? 1 : 0
     }
-    
+
     return this.http.post(this.heatControlTaskUrl, newTask, { responseType: 'text' }).pipe(
       tap((msg: string) => this.messageService.add(`Taak toegevoegd, response: ${msg}`)),
       catchError(this.handleHttpError<string>('addTask')));
@@ -89,23 +96,14 @@ export class HeatControlService {
     return tasks;
   }
 
-  setPermanentOverride(state: boolean): Observable<string> {
-    this.messageService.add(`Permanente override ${state ? "aan" : "uit"} gezet`);
+  setOverride(heatStatus: HeatStatus): Observable<string> {
+    this.messageService.add(`Temporary override ${heatStatus.temporary ? "aan" : "uit"} gezet`);
+    this.messageService.add(`Permanente override ${heatStatus.permanent ? "aan" : "uit"} gezet`);
 
-    return this.http.get<string>(this.heatControlOverrideUrl + "permanent=" + state).pipe(
-      tap((msg: string) => this.messageService.add(`Permanent override ingesteld, response: ${msg}`)),
+    return this.http.post<string>(this.heatControlHeatUrl, heatStatus).pipe(
+      tap((msg: string) => this.messageService.add(`override ingesteld, response: ${msg}`)),
       catchError(this.handleHttpError<string>('setPermanentOverride')));
   }
-
-  setTemporaryOverride(state: boolean): Observable<string> {
-    this.messageService.add(`Tijdelijke override ${state ? "aan" : "uit"} gezet`);
-
-    return this.http.get<string>(this.heatControlOverrideUrl + "temporary=" + state).pipe(
-      tap((msg: string) => this.messageService.add(`Override ingesteld, response: ${msg}`)),
-      catchError(this.handleHttpError<string>('setTemporaryOverride')));
-  }
-
-
 
   private handleHttpError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

@@ -2,6 +2,9 @@
   <mat-card-content>
     <h2>Huidige instelling aanpassen</h2>
     <section class="example-section">
+    {{time}}
+    </section>
+    <section class="example-section">
       Huidige status
       <mat-slide-toggle (change)="temporaryOverrideSliderToggle()" class="example-margin" [disabled]=(slidersDisabled)
         [(ngModel)]="temporaryOverrideSliderChecked">

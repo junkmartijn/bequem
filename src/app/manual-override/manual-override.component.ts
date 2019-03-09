@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeatControlService } from '../services/heat-control.service';
 import { Observable } from 'rxjs';
-import { HeatStatusResponse } from '../models/heat-status-response';
+import { HeatStatus } from '../models/heat-status';
 
 @Component({
   selector: 'app-manual-override',
@@ -13,8 +13,9 @@ export class ManualOverrideComponent implements OnInit {
   temporaryOverrideSliderChecked: boolean = false;
   permanentOverrideSliderChecked: boolean = false;
 
-  status: Observable<HeatStatusResponse>;
+  status: Observable<HeatStatus>;
 
+  time: string;
   temporaryOverrideStatus: boolean;
   permanentOverrideStatus: boolean;
 
@@ -22,60 +23,46 @@ export class ManualOverrideComponent implements OnInit {
 
   ngOnInit() {
     this.GetStatus();
+    this.GetTime();
   }
 
   onClickToggle2(): void {
-    this.heatControlService.setPermanentOverride(null);
+    this.heatControlService.setOverride(null);
   }
 
   temporaryOverrideSliderToggle() {
-    this.slidersDisabled = true;
-
-    this.heatControlService.setTemporaryOverride(this.temporaryOverrideSliderChecked)
-      .subscribe(qq => {
-        console.log("response from temporary override return_value: " + qq["return_value"])
-        this.GetStatus();
-        this.slidersDisabled = false
-      });
+    this.UpdateHeat();
   }
 
   permanentOverrideSliderToggle() {
-    this.slidersDisabled = true;
+    this.UpdateHeat();
+  }
 
-    this.heatControlService.setPermanentOverride(this.permanentOverrideSliderChecked)
+  private UpdateHeat() {
+    this.slidersDisabled = true;
+    let newHeatStatus: HeatStatus = new HeatStatus();
+    newHeatStatus.temporary = this.temporaryOverrideSliderChecked;
+    newHeatStatus.permanent = this.permanentOverrideSliderChecked;
+    this.heatControlService.setOverride(newHeatStatus)
       .subscribe(qq => {
-        console.log("response from permanent override return_value: " + qq["return_value"])
         this.GetStatus();
-        this.slidersDisabled = false
+        this.slidersDisabled = false;
       });
   }
 
   GetStatus() {
-    this.heatControlService.getHeatStatuses().subscribe(status => {
-      let heat_status = status.heat_status;
-      if (heat_status == 1 || heat_status == 3) {
-        this.temporaryOverrideStatus = true;
-      }
-      else if (heat_status == 0 || heat_status == 2) {
-        this.temporaryOverrideStatus = false;
-      }
-      else {
-        //Error
-        this.temporaryOverrideStatus = true;
-      }
-
-      if (heat_status == 2 || heat_status == 3) {
-        this.permanentOverrideStatus = true;
-      }
-      else if (heat_status == 0 || heat_status == 1) {
-        this.permanentOverrideStatus = false;
-      } else {
-        //Error
-        this.permanentOverrideStatus = true;
-      }
+    this.heatControlService.getHeatStatus().subscribe(status => {
+      this.temporaryOverrideStatus = status.temporary;
+      this.permanentOverrideStatus = status.permanent;
 
       this.temporaryOverrideSliderChecked = this.temporaryOverrideStatus;
       this.permanentOverrideSliderChecked = this.permanentOverrideStatus;
     });;
+  }
+
+  GetTime() {
+    this.heatControlService.getTime().subscribe(time => {
+      this.time = time.datetime;
+    })
   }
 }
