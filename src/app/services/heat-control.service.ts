@@ -20,7 +20,7 @@ const httpOptions = {
 export class HeatControlService {
 
   //private heatControlBaseUrl = 'http://demo5335077.mockable.io/';
-  private heatControlBaseUrl = 'http://192.168.1.204/';
+  private heatControlBaseUrl = 'http://192.168.1.206/';
   private heatControlTimeUrl = this.heatControlBaseUrl + 'api/time';
   private heatControlHeatUrl = this.heatControlBaseUrl + 'api/heat';
   private heatControlTaskUrl = this.heatControlBaseUrl + 'api/task';
@@ -97,12 +97,11 @@ export class HeatControlService {
   }
 
   setOverride(heatStatus: HeatStatus): Observable<string> {
-    this.messageService.add(`Temporary override ${heatStatus.temporary ? "aan" : "uit"} gezet`);
-    this.messageService.add(`Permanente override ${heatStatus.permanent ? "aan" : "uit"} gezet`);
+    this.messageService.add(`Temporary override ${heatStatus.temporary ? "aan" : "uit"} gezet en Permanente override ${heatStatus.permanent ? "aan" : "uit"} gezet`);
 
-    return this.http.post<string>(this.heatControlHeatUrl, heatStatus).pipe(
+    return this.http.post(this.heatControlHeatUrl, heatStatus, { responseType: 'text' }).pipe(
       tap((msg: string) => this.messageService.add(`override ingesteld, response: ${msg}`)),
-      catchError(this.handleHttpError<string>('setPermanentOverride')));
+      catchError(this.handleHttpError<string>('setOverride')));
   }
 
   private handleHttpError<T>(operation = 'operation', result?: T) {

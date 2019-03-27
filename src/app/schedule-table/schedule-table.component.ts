@@ -16,6 +16,10 @@ export class ScheduleTableComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  tasksOrdered(){
+    return this.tasks.sort((a, b) => a.dow - b.dow || a.datetime.getTime() - b.datetime.getTime());
+  }
   
   delete(task: Task): void {
     this.tasks = this.tasks.filter(t => t !== task);
